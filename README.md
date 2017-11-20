@@ -22,8 +22,12 @@ When the script ends, the user is presented with a web page with all the compone
 
 ![](web1.png)
 
-Green components are ones that are on the PK database and there is adequate stock of. Pink components are on the PK database but the stock is insufficient for the project. (There are some items I have recently ordered which is why they have not yet been allocated inventory numbers and are in my INBOX). Bluey-green lines are parts that I am not keeping a stock record of with PK e.g.	 various pin headers here.
-The brownish lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet.
+Green components are ones that are on the PK database and for which there is an adequate stock. Pink components are on the PK database but the stock is insufficient for the project. (There are some items I have recently ordered which is why they have not yet been allocated inventory numbers and are in my INBOX). Bluey-green lines are parts that I am not keeping a stock record of with PK e.g.	 various pin headers here.
+The brownish lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet & the BOM total is not calculated as it is not meaningful.
+
+I have added some icons for ROHS status and manufacturing status (with tooltips). The icons currently need to be placed in the generated webpage directory but I will get around to base64 encoding them and including them in the script to make it freestanding. 
+
+![](web1icons.png)
 
 It prints out without the colours for stock picking. I haven’t added a lot of pricing to my stock but the option is there and I might go back and do it for the common components.
 
