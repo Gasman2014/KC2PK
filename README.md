@@ -27,7 +27,7 @@ The brownish lines are ones where there is more than one component in the PK dat
 
 I have added some icons for ROHS status and manufacturing status (with tooltips). The icons currently need to be placed in the generated webpage directory but I will get around to base64 encoding them and including them in the script to make it freestanding. 
 
-![](web1icons.png)
+![](Web1icons.png)
 
 It prints out without the colours for stock picking. I haven’t added a lot of pricing to my stock but the option is there and I might go back and do it for the common components.
 
