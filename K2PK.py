@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 #coding=utf-8
 
+
+
+# TODO IF no choice made at runthrough, do not calculate BOM total.
+# TODO Add in RoHS logo
+
+
 from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
 import sys
@@ -23,6 +29,8 @@ try:
     os.makedirs('./KP/barcodes')
 except OSError:
     pass
+
+invalidate_BOM_Cost = False
 
 
 def float_to_str(f):
@@ -59,6 +67,43 @@ def convert_units(num):
     r = r.rstrip(".")
     return(r)
 
+
+def partStatus(partID, parameter):
+    dbconfig = read_db_config()
+    try:
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        sql = "SELECT R.stringValue FROM PartParameter R WHERE (R.name = '{}') AND (R.part_id = {})".format(parameter, partID)
+        cursor.execute(sql)
+        partStatus = cursor.fetchall()
+
+        if partStatus == []:
+            part = "Unknown"
+        else:
+            part = str(partStatus[0])[2:-3]
+        return (part)
+
+    except UnicodeEncodeError as err:
+        print(err)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+compliance = {
+    'Compliant' : 'ROHS_GREEN.png',
+    'Non-Compliant' : 'ROHS_RED.png',
+    'Unknown' : 'ROHS_BLACK.png'
+    }
+
+manufacturing = {
+    'Obsolete' :    'FACTORY_RED.png',
+    'Not Recommended for New Designs' : 'FACTORY_YELLOW.png',
+    'Unknown'   :   'FACTORY_BLUE.png',
+    'Active'    :   'FACTORY_GREEN.png',
+    'Not Listed by Manufacturer' :   'FACTORY_PURPLE.png'
+    }
 
 dateBOM = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -124,6 +169,8 @@ p {
     width : 35%;
     float   : left;
 }
+
+
 </style>
 <title>Kicad 2 PartKeepr</title>
 </head>
@@ -215,7 +262,7 @@ def punctuate(value):
 def get_choice(possible):
     print ("More than one component in the PartKeepr database meets the criteria:")
     i = 1
-    for name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn in possible:
+    for name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid in possible:
         print (i, " : ", name, " : ", description)
         i = i + 1
     print ("Choose which component to add to BOM (or 0 to defer)")
@@ -229,10 +276,10 @@ def get_choice(possible):
         break
 
     i = 1
-    for name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn in possible:
-        possible = (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn)
+    for name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid in possible:
+        possible = (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid)
         if i == choice:
-            possible = (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn)
+            possible = (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid)
             print ("Selected :")
             print (possible[0], " : ", possible[1])
             return [possible]
@@ -274,7 +321,7 @@ def find_part(part_num):
                 c_characteristics = component[3]
 
                 # A fully specified 'bean'
-                sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name
+                sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name, P.id
                         FROM Part P
                         JOIN PartParameter R ON R.part_id = P.id
                         JOIN StorageLocation S ON  S.id = P.storageLocation_id
@@ -287,7 +334,7 @@ def find_part(part_num):
                         COUNT(DISTINCT R.name)=3""".format(c_case, quality, c_value, variant, c_characteristics)
             else:
                 # A partially specified 'bean'
-                sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name
+                sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name, P.id
                         FROM Part P
                         JOIN PartParameter R ON R.part_id = P.id
                         JOIN StorageLocation S ON  S.id = P.storageLocation_id
@@ -299,7 +346,7 @@ def find_part(part_num):
                         COUNT(DISTINCT R.name)=2""".format(c_case, quality, c_value)
         else:
 
-            sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name
+            sql = """SELECT P.name, P.description, P.stockLevel, P.minStockLevel, P.averagePrice, P.internalPartNumber, S.name, P.id
                  FROM Part P
                  JOIN StorageLocation S ON  S.id = P.storageLocation_id
                  WHERE P.name LIKE '%{}%'""".format(part_num)
@@ -341,6 +388,7 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
         part = row['Part#']
         value = row['Value']
         footprint = row['Footprint']
+        datasheet = row['Datasheet']
         characteristics = row['Characteristics']
         references = row['References']
         quantity = row['Quantity Per PCB']
@@ -378,17 +426,23 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
 
 # Print to screen - these could all do with neatening up...
         print(('{:_<141}').format(""))
-        print (("|{:80} | {:13.13}         |                  | Req =   {:5}|").format(references, part, quantity))
+        print (("| {:80} | {:13.13}         |                  | Req =   {:5}|").format(references, part, quantity))
         print(('{:_<141}').format(""))
 
         if n_components == 0:
-            print("|No matching parts in database                                                    |                                                         |")
+            print("| No matching parts in database                                                    |                                                         |")
             print(('{:_<141}').format(""))
             print('\n')
 
         else:
-            for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn) in component_info:
-                print(("|{:80} | Location = {:10} | Part no = {:6} | Stock = {:5}|").format(description, storage_locn, partNum, stockLevel))
+            for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid) in component_info:
+                ROHS = partStatus(PKid, 'RoHS')
+                Lifecycle = partStatus(PKid, 'Lifecycle Status')
+                print(("| {:80} | Location = {:10} | Part no = {:6} | Stock = {:5}|").format(description, storage_locn, partNum, stockLevel))
+                print(('{:_<141}').format(""))
+                print(("| Manufacturing status: {} {:<116}|").format("",Lifecycle))
+                print(("| RoHS: {}{:<133}|").format("", ROHS))
+                print(("| Name: {}{:<133}|").format("", name))
                 print(('{:_<141}').format(""))
             print('\n')
 
@@ -396,6 +450,11 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
 # More than one matching component exists - prompt user to choose
         if len(component_info) >= 2:
             component_info = get_choice(component_info)
+            for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid) in component_info:
+                ROHS = partStatus(PKid, 'RoHS')
+                Lifecycle = partStatus(PKid, 'Lifecycle Status')
+
+
 
         if quantity > stockLevel and n_components != 0:
             count_LowStockLines = count_LowStockLines + 1
@@ -438,22 +497,34 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
             background = 'rgba(60, 60, 0, 0.4)'
 
 
-        i = 0
-        for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn) in component_info:
-            web.write("<tr style = 'background-color : "+background+";'>")
-            if i == 0:  # 1st line where multiple components fit search showing RefDes
-                web.write("<td style = 'font-weight : bold'>"+references+"</td>")
-                web.write("<td >"+part+"</td>")
 
+        i = 0
+        for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid) in component_info:
+            web.write("<tr style = 'background-color : " + background + ";'>")
+            if i == 0:  # 1st line where multiple components fit search showing RefDes
+                web.write("<td style = 'font-weight : bold'>" + references + "</td>")
+                if not datasheet:
+                    web.write("<td >"+name+"</td>")
+                else:
+                    web.write("<td ><a href = " + datasheet + ">" + name + "</a></td>")
                 i = i + 1
                 count_PKP = count_PKP + 1
             else:  # 2nd and subsequent lines where multiple components fit search showing RefDes
                 web.write("<td colspan='2' style = 'font-weight : bold;'> *** ATTENTION *** Multiple sources available *** Use only ONE line *** </td>")
-
+                invalidate_BOM_Cost = True
             lineCost = float(averagePrice) * int(quantity)
             if lineCost == 0:
                 count_PWP += 1
-            web.write("<td >"+description+"</td>")
+
+
+            rohsIcon = compliance[ROHS]
+            lifecycleIcon = manufacturing[Lifecycle]
+
+
+
+#            web.write("<td>" + description + "<div class='tooltip'><img align = 'right' src = '" + rohsIcon + "'><img align = 'right' src = '" + lifecycleIcon + "'><span class='tooltiptext'>ToolTip</span></div></td>")
+            web.write("<td>" + description + "  <img align = 'right' src = '" + rohsIcon + "'alt='' title='ROHS: " + ROHS + "'/><img align = 'right' src = '" + lifecycleIcon + "'alt='' title='Lifecycle: " + Lifecycle + "'/></td>")
+
             web.write("<td style = 'font-weight : bold'>"+str(stockLevel)+"</td>")
 
 # Part number exists, therefore generate bar code
@@ -555,7 +626,10 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
     accounting.write("<td>" + str(count_LowStockLines) + "</td>")
     accounting.write("</tr><tr>")
     accounting.write("<td>BOM Cost</td>")
-    accounting.write("<td>" + bomCostDisp + "</td>")
+    if not invalidate_BOM_Cost:
+        accounting.write("<td>" + bomCostDisp + "</td>")
+    else:
+        accounting.write("<td>BOM price not calculated</td>")
     accounting.write(("</tr></table><p>"))
 
 #Assemble webpage
