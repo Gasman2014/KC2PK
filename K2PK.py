@@ -3,8 +3,8 @@
 
 
 
-# TODO IF no choice made at runthrough, do not calculate BOM total.
-# TODO Add in RoHS logo
+# TODO Add print version WITHOUT icons
+
 
 
 from mysql.connector import MySQLConnection, Error
@@ -109,8 +109,7 @@ dateBOM = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 run = 0
 web = open("./KP/temp.html", "w")
-
-
+picklist = open("./KP/picklist.html", "w")
 labels = open("./KP/labels.html", "w")
 accounting = open("./KP/accounting.html", "w")
 missing = open("./KP/missing.tsv", "w")
@@ -180,8 +179,48 @@ htmlIntro = "<body><h1> KiCad 2 PartKeepr </h1><br><h2> Project name: " + projec
 
 htmlBodyHeader = """
 <br><br>
-<table class = "main">
+<table class = 'main'>
 """
+
+picklistHeader = """
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01//EN'>
+<meta charset="utf-8">
+<html>
+<head>
+<title>Picklist></title>
+<style>
+body {
+    background-color: #ffffff
+}
+h1 {
+    color: #ffffff;
+    text-align: right;
+    font-family: Arial, Helvetica, sans-serif;
+    background : -webkit-linear-gradient(left, #ffffff, #667399);
+    padding:20px 40px 20px 40px;
+    text-shadow: 2px 2px #33394d;
+}
+
+p, h2, h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    padding:0px 0px 0px 0px;
+    }
+
+.main, th, td, tr {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size : 12pt;
+    border :    1px solid black;
+    padding :   5px;
+    border-collapse: collapse;
+}
+</style>
+</head>
+<body>
+<h1> KiCad 2 PartKeepr </h1><br><h2> Project name: """
+
+pick2 = projectName + "</h2><h3>" + dateBOM + "</h3><p>"
+
+picklist.write(picklistHeader + pick2 + "<table class = 'main'>")
 
 
 label_header = """
@@ -241,6 +280,7 @@ htmlAccountingHeader = """
 
 
 htmlLinks = """<br><p><a href='labels.html'> Labels  </a>
+<br><p><a href='picklist.html'> Pick list </a>
 <br><p><a href='missing.tsv'> Missing parts list  </a>
 <br><p><a href='under.tsv'> Understock items list </a>
 <br><p><a href= """
@@ -286,8 +326,6 @@ def get_choice(possible):
         i = i + 1
 
 
-
-
 def find_part(part_num):
 
     dbconfig = read_db_config()
@@ -311,7 +349,7 @@ def find_part(part_num):
             component = part_num.split('_')
 
             if (len(component)) <= 2:
-                print ("Insufficient parameters (Needs 3 or 4) e.g. R_0805_100K_±5%")
+                print ("Insufficient parameters (Needs 3 or 4) e.g. R_0805_100K(_±5%)")
                 return ("0")
 
             c_case = component[1]
@@ -396,6 +434,7 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
         # of NULL placeholders where there was a blank line.
         if part == "" and value == "" and footprint == "":
             break
+
         count_BOMLine = count_BOMLine + 1
 
         if footprint in resistors:
@@ -471,6 +510,8 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
         if run == 0:
             web.write("<tr style = 'background-color : white; font-weight : bold;'>")
             web.write("<th>References</th><th>Part</th><th>Description</th><th>Stock</th><th>Part Number</th><th>Location</th><th>Qty</th><th>Each</th><th>Line</th>")
+            picklist.write("<tr style = 'font-weight : bold;'>")
+            picklist.write("<th>References</th><th>Part</th><th>Description</th><th>Stock</th><th>Part Number</th><th>Location</th><th>Qty</th><th>Each</th><th>Line</th>")
             run = 1
 
 # No PK components fit search criteria. Deal with here and drop before loop.
@@ -481,51 +522,65 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
 
             background = 'rgba(0, 60, 60, 0.4)' # Green Blue background
             web.write("<tr style = 'background-color : "+background+";'>")
-            web.write("<td style = 'font-weight : bold'>"+references+"</td>")
+            web.write("<td style = 'font-weight : bold;'>"+references+"</td>")
             web.write("<td >"+part+"</td>")
             web.write("<td > Non PartKeepr component</td>")
-            web.write("<td style = 'font-weight : bold'>NA</td>")
-            web.write("<td style = 'background-color : white' align='center'>NA</td>")
-            web.write("<td style = 'background-color : white' align='center'>NA</td>")
+            web.write("<td style = 'font-weight : bold;'>NA</td>")
+            web.write("<td style = 'background-color : white;' align='center'>NA</td>")
+            web.write("<td style = 'background-color : white;' align='center'>NA</td>")
             web.write("<td style = 'font-weight : bold; background-color : white;'> " + quantity + "</td>")
             web.write("<td style = 'background-color : white;'> £-:-- </td>")
             web.write("<td style = 'background-color : white;'> £-:-- </td></tr>")
+
+            picklist.write('\n')
+            picklist.write("<tr style = 'background-color : white;'>")
+            picklist.write("<td style = 'font-weight : bold;'>"+references+"</td>")
+            picklist.write("<td >"+part+"</td>")
+            picklist.write("<td > Non PartKeepr component</td>")
+            picklist.write("<td style = 'font-weight : bold;'>NA</td>")
+            picklist.write("<td align='center'>NA</td>")
+            picklist.write("<td align='center'>NA</td>")
+            picklist.write("<td style = 'font-weight : bold;'> " + quantity + "</td>")
+            picklist.write("<td> £-:-- </td>")
+            picklist.write("<td> £-:-- </td></tr>")
+
             missing.write(references + '\t' + part + '\t' + quantity + '\n')
             name = "-"
 
         if n_components > 1:  # Multiple component fit search criteria - set brown background
             background = 'rgba(60, 60, 0, 0.4)'
 
-
-
         i = 0
         for (name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid) in component_info:
             web.write("<tr style = 'background-color : " + background + ";'>")
+            picklist.write('\n')
+            picklist.write("<tr style = 'background-color : white;'>")
             if i == 0:  # 1st line where multiple components fit search showing RefDes
-                web.write("<td style = 'font-weight : bold'>" + references + "</td>")
+                web.write("<td style = 'font-weight : bold;'>" + references + "</td>")
+                picklist.write("<td style = 'font-weight : bold;'>" + references + "</td>")
                 if not datasheet:
-                    web.write("<td >"+name+"</td>")
+                    web.write("<td>"+name+"</td>")
                 else:
                     web.write("<td ><a href = " + datasheet + ">" + name + "</a></td>")
+                picklist.write("<td>"+name+"</td>")
                 i = i + 1
                 count_PKP = count_PKP + 1
             else:  # 2nd and subsequent lines where multiple components fit search showing RefDes
                 web.write("<td colspan='2' style = 'font-weight : bold;'> *** ATTENTION *** Multiple sources available *** Use only ONE line *** </td>")
+                picklist.write("<td colspan='2' style = 'font-weight : bold;'> *** ATTENTION *** Multiple sources available *** Use only ONE line *** </td>")
                 invalidate_BOM_Cost = True
             lineCost = float(averagePrice) * int(quantity)
             if lineCost == 0:
                 count_PWP += 1
 
-
             rohsIcon = compliance[ROHS]
             lifecycleIcon = manufacturing[Lifecycle]
 
-
-
-#            web.write("<td>" + description + "<div class='tooltip'><img align = 'right' src = '" + rohsIcon + "'><img align = 'right' src = '" + lifecycleIcon + "'><span class='tooltiptext'>ToolTip</span></div></td>")
             web.write("<td>" + description + "  <img align = 'right' src = '" + rohsIcon + "'alt='' title='ROHS: " + ROHS + "'/><img align = 'right' src = '" + lifecycleIcon + "'alt='' title='Lifecycle: " + Lifecycle + "'/></td>")
+            web.write("<td style = 'font-weight : bold;'>"+str(stockLevel)+"</td>")
 
-            web.write("<td style = 'font-weight : bold'>"+str(stockLevel)+"</td>")
+            picklist.write("<td>" + description + "</td>")
+            picklist.write("<td style = 'font-weight : bold;'>"+str(stockLevel)+"</td>")
 
 # Part number exists, therefore generate bar code
 # Requires Zint >1.4 - doesn't seem to like to write to another directory.
@@ -535,29 +590,40 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
                 part_no = (partNum[1:])
                 subprocess.call(['/usr/local/bin/zint', '--filetype=png', '-w', '10', '--height', '20', '-o', part_no, '-d', partNum])
                 os.rename (part_no+'.png', 'KP/barcodes/'+part_no+'.png')
-                web.write("<td style = 'background-color : white' align='center'><img src = barcodes/"+part_no+".png ></td>")
+                web.write("<td style = 'background-color : white' align='center'><img src = barcodes/" + part_no + ".png ></td>")
+                picklist.write("<td style = 'background-color : white' align='center'><img src = barcodes/" + part_no + ".png ></td>")
             else:
                 # No Part number
                 web.write("<td style = 'background-color : white' align = 'center'> NA </td>")
+                picklist.write("<td style = 'background-color : white' align = 'center'> NA </td>")
 
 # Storage location exists, therefore generate bar code. Ugly hack - my location codes start with
 # a '$' which causes problems. Name the file without the leading character.
             if storage_locn != "":
                 locn_trim = ""
                 locn_trim = (storage_locn[1:])
-                web.write("<td style = 'background-color : white' align='center'><img src = barcodes/"+locn_trim+".png ></td>")
                 subprocess.call(['/usr/local/bin/zint', '--filetype=png', '-w', '10', '--height', '20', '-o', locn_trim, '-d', storage_locn])
                 os.rename (locn_trim+'.png', 'KP/barcodes/'+locn_trim+'.png')
+                web.write("<td style = 'background-color : white' align='center'><img src = barcodes/" + locn_trim + ".png ></td>")
+                picklist.write("<td style = 'background-color : white' align='center'><img src = barcodes/" + locn_trim + ".png ></td>")
             else:
                 # No storage location
                 web.write("<td style = 'background-color : white' align = 'center'> NA </td>")
+                picklist.write("<td align = 'center'> NA </td>")
+
             avPriceFMT = str(('£{:0,.2f}').format(averagePrice))
             linePriceFMT = str(('£{:0,.2f}').format(lineCost))
             bomCost = bomCost + lineCost
+
             web.write("<td style = 'font-weight : bold; background-color : white;'> "+quantity+"</td>")
             web.write("<td style = ' background-color : white;'> " + avPriceFMT + "</td>")
             web.write("<td style = ' background-color : white;'> " + linePriceFMT + "</td></tr>")
             web.write('\n')
+
+            picklist.write("<td style = 'font-weight : bold;'> "+quantity+"</td>")
+            picklist.write("<td> " + avPriceFMT + "</td>")
+            picklist.write("<td> " + linePriceFMT + "</td></tr>")
+            picklist.write("\n")
 
 # Make labels for packets (need extra barcodes here)
             subprocess.call(['/usr/local/bin/zint', '--filetype=png', '-w', '10', '--height', '20', '-o', name, '-d', name])
@@ -600,6 +666,9 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
 # Write out footer for webpage
     web.write(("</table></body></html>"))
 
+# Write out footer for picklist
+    picklist.write(("</table></body></html>"))
+
 # Write out footer for labels
     labels.write(("</tr></table></body></html>"))
 
@@ -632,18 +701,22 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
         accounting.write("<td>BOM price not calculated</td>")
     accounting.write(("</tr></table><p>"))
 
-#Assemble webpage
+# Assemble webpage
 web = open("./KP/temp.html", "r")
 web_out = open("./KP/webpage.html", "w")
+
 
 accounting = open("./KP/accounting.html", "r")
 accounting = accounting.read()
 
 htmlBody = web.read()
 
+
 web_out.write(htmlHeader + htmlIntro)
 web_out.write(htmlAccountingHeader + accounting + htmlLinks + "<br><br><br>")
 web_out.write(htmlBodyHeader + htmlBody)
+
+
 
 # Open webpage in default browser
 webbrowser.open('file://' + os.path.realpath('./KP/webpage.html'))
