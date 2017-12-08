@@ -21,7 +21,7 @@ You then run my script on the BOM. It will check each line of the BOM against th
 
 When the script ends, the user is presented with a web page with all the components on the original BOM. It identifies each BOM line with a colour key and gives info on stock level and location and, if printed, acts as a stock ‘Pick’list.
 
-![](web.png)
+![](screenshots/web.png)
 
 Green components are ones that are on the PK database and for which there is an adequate stock. Pink components are on the PK database but the stock is insufficient for the project. (There are some items I have recently ordered which is why they have not yet been allocated inventory numbers and are in my INBOX). Bluey-green lines are parts that I am not keeping a stock record of with PK e.g.	 various pin headers here.
 The brownish lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet & the BOM total is not calculated as it is not meaningful.
