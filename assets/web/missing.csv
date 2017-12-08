@@ -1,0 +1,13 @@
+EEEFT1C101AR,2,C1 C2
+C_0805_10u,1,C4
+1N4448W-7-F,2,D2 D3
+L-93WEGW,1,D1
+Pin_Header_Straight_1x03_Pitch2.54mm,1,J2
+Pin_Header_Straight_1x05_Pitch2.54mm,1,J3
+Pin_Header_Straight_2x03_Pitch2.54mm,1,J4
+R_0805_4k7,2,R8 R9
+R_0805_750R,2,R1 R2
+Pin_Header_Straight_1x06_Pitch2.54mm,1,U12
+LF50ABDT-TR,1,U1
+MCP1703A-3302_SOT23,1,U2
+ABM3B,1,Y1
