@@ -21,26 +21,26 @@ You then run my script on the BOM. It will check each line of the BOM against th
 
 When the script ends, the user is presented with a web page with all the components on the original BOM. It identifies each BOM line with a colour key and gives info on stock level and location and, if printed, acts as a stock ‘Pick’list.
 
-![](web.png)
+![](screenshots/web.png)
 
 Green components are ones that are on the PK database and for which there is an adequate stock. Pink components are on the PK database but the stock is insufficient for the project. (There are some items I have recently ordered which is why they have not yet been allocated inventory numbers and are in my INBOX). Bluey-green lines are parts that I am not keeping a stock record of with PK e.g.	 various pin headers here.
 The brownish lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet & the BOM total is not calculated as it is not meaningful.
 
 I have added some icons for ROHS status and manufacturing status (with tooltips). The icons & stylesheets need to remain in the 'assets' directory. The output page is a webpage (webpage.html) in the same directory as the script.
 
-![](web1.png)
+![](screenshots/web1.png)
 
 By clicking on a part number, you can access a part information page that is built using the Octopart API. This will give you access to a list of product characteristics, datasheet links and a price breakdown for a wide range of distributors. Each line should ahve a SKU and is hotlinked to the component distributors.
 
-![](octo.png)
+![](screenshots/octo.png)
 
 There is a menu item for producting a pick list. If this is printed out it can be taken to the parts store and the components selected (the pick list has barcodes for all the componets and storage locations.)
 
-![](pickList.png)
+![](screenshots/pickList.png)
 
  There is also a 'Labels' output; these labels can be put on bags / containers when the stock is picked and identify the project, the RefDes and have barcodes for partnumbers, location and quantity to easy stock management.
 
-![](labels.png)
+![](screenshots/labels.png)
 The final output is a csv/tsv file containing the refDes, the part number and quantity - this can be used as an source file to import as a Project in PartKeepr.
 
 Any parts which are KNOWN not to be in the PK database are allocated a part number of ‘-’ which is registered on PK as a ’NonPartKeepr part - this makes it easy to import the BOM as you know already that the import will not fail!
@@ -49,6 +49,6 @@ Further outputs include a ‘MISSING’ list - these are items that do not exist
 
 Each component in the main webpage has a list of distributors (from a 'preferrred distributor list') and hotlinks tot he appropriate SKU. If you set the appropriate 'SKU URL' in PartKeepr, this will take you straight to that distributors website. (Eg, Mouser is https://www.mouser.co.uk/Search/Refine.aspx?Keyword= ).
 
-![](Farnell.png)
+![](screenshots/Farnell.png)
 
 The script has been developed on macOS and runs on Python3. It should run on Unix type systems but might be more of a problem on Windows. There is a config.ini file which will need to be set up with appropriate entries for where the PK database is and a username and password. There are a number of Python dependencies - all of which should be installed easily with pip. The most important is mySQLconnector. (https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html) If your PartKeepr datbase is not on mySQL you may need to adjust the configuration and the connector - I have no experience or knowledge of alternatives.
