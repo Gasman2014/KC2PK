@@ -3,6 +3,13 @@
 
 # TODO: Put all CSS into single external stylesheet [partially done]
 # TODO: Split html write headers / intro etc into seperate project
+# IDEA: Consider using schematic as source for script. Will need to have run
+# CvPCB in order to set footprints; may not be worthwhile.
+# However, possible to write back to schematic when a choice has been between
+# two or more components.
+
+# FIXME: Remove pprint dependancy?
+#
 
 
 import csv
@@ -204,7 +211,7 @@ def octopartLookup(partIn, bean):
       <title>Octopart Lookup</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="Description" lang="en" content="Kicad2PartKeepr">
-      <meta name="author" content="jpateman@gmail.com">
+      <meta name="author" content="name@email">
       <meta name="robots" content="index, follow">
 
       <!-- icons -->
@@ -231,8 +238,10 @@ def octopartLookup(partIn, bean):
 
     ##################
     bean = False
-    # FIXME: Treat 'bean' devices separately - use 'search' API not 'match'
-    # FIXME: Search only for Non_PK parts in first instance.
+    # TODO: Treat 'bean' devices separately - use 'search' API not 'match'
+    # Need to do some sort of fuzzy search for part
+    # NB returned json needs to be parsed in a different way to the match json.
+    # Search only for Non_PK parts in first instance.
     ##################
 
     if bean:
