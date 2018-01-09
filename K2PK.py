@@ -3,13 +3,6 @@
 
 # TODO: Put all CSS into single external stylesheet [partially done]
 # TODO: Split html write headers / intro etc into seperate project
-# IDEA: Consider using schematic as source for script. Will need to have run
-# CvPCB in order to set footprints; may not be worthwhile.
-# However, possible to write back to schematic when a choice has been between
-# two or more components.
-
-# FIXME: Remove pprint dependancy?
-#
 
 
 import csv
@@ -211,7 +204,7 @@ def octopartLookup(partIn, bean):
       <title>Octopart Lookup</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="Description" lang="en" content="Kicad2PartKeepr">
-      <meta name="author" content="name@email">
+      <meta name="author" content="jpateman@gmail.com">
       <meta name="robots" content="index, follow">
 
       <!-- icons -->
@@ -238,10 +231,8 @@ def octopartLookup(partIn, bean):
 
     ##################
     bean = False
-    # TODO: Treat 'bean' devices separately - use 'search' API not 'match'
-    # Need to do some sort of fuzzy search for part
-    # NB returned json needs to be parsed in a different way to the match json.
-    # Search only for Non_PK parts in first instance.
+    # FIXME: Treat 'bean' devices separately - use 'search' API not 'match'
+    # FIXME: Search only for Non_PK parts in first instance.
     ##################
 
     if bean:
@@ -417,7 +408,7 @@ def octopartLookup(partIn, bean):
 
                 print(("| {:24} | {:19} | {:>9} | {:>7} | {:11} |").format(
                     _seller, _sku, _stock, _moq, _package), end="")
-                line = "<tr><td>" + _seller + "</td><td><a href=" + str(offer['product_url']) + ">" + str(
+                line = "<tr><td>" + _seller + "</td><td><a target='_blank' href=" + str(offer['product_url']) + ">" + str(
                     offer['sku']) + "</a></td><td>" + str(_stock) + "</td><td>" + str(_moq) + "</td><td>" + _package + "</td>"
                 webpage.write(line)
 
