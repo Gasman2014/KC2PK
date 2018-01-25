@@ -879,7 +879,7 @@ with open(file_name, newline='', encoding='utf-8') as csvfile:
                 ROHS = partStatus(PKid, 'RoHS')
                 Lifecycle = partStatus(PKid, 'Lifecycle Status')
 
-        if quantity > stockLevel and n_components != 0:
+        if n_components != 0 and (quantity > stockLevel):
             count_LowStockLines = count_LowStockLines + 1
             background = 'rgba(60, 0, 0, 0.15)'  # Insufficient stock : pinkish
             under.write(
