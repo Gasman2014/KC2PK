@@ -1,0 +1,308 @@
+/* -----------------------
+Base styles
+------------------------*/
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #586e75;
+    /* background-color: #fdf6e3; */
+    font: 1em/1.2 Arial, "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 .5em;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+h1 {
+    font-size: 2em;
+    text-align: left;
+    margin-top: 1.5em;
+    margin-bottom: 0em;
+}
+
+/* 36px */
+
+h2 {
+    font-size: 1.65em;
+    text-align: left;
+    color: #073642;
+    margin-bottom: 1em;
+    margin-top: 2em;
+    margin-left: 1em;
+}
+
+h3 {
+    font-size: 1.375em;
+    margin-top: 0.5em;
+    margin-left: 1.2em;
+}
+
+/* 22px */
+h4 {
+    font-size: 1.125em;
+}
+
+/* 18px */
+h5 {
+    font-size: 1em;
+}
+
+/* 16px */
+h6 {
+    font-size: .875em;
+}
+
+/* 14px */
+
+
+p {
+    margin: 0px;
+    font-size: 0.9em;
+    padding: 0px;
+    color: #586e75;
+}
+
+blockquote {
+    padding: 1em 2em;
+    margin: 0 0 2em;
+    border-left: 5px solid #eee;
+}
+
+hr {
+    height: 0;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+table {
+    background-color: transparent;
+    border-spacing: 0;
+    border-collapse: collapse;
+    /* border-top: 1px solid #073642; */
+}
+
+
+
+th,
+td {
+    padding: .5em 1em;
+    vertical-align: top;
+    text-align: left;
+    /* border-bottom: 1px solid #073642; */
+}
+
+th {
+    background-color: #C0D6EE;
+}
+
+tr:nth-child(even) {
+    background: #e3e3e3
+}
+
+tr:nth-child(odd) {
+    background: #f6f6f6
+}
+
+
+a:link {
+    color: royalblue;
+}
+
+a:visited {
+    color: purple;
+}
+
+a:focus {
+    color: black;
+}
+
+a:hover {
+    color: green;
+}
+
+a:active {
+    color: red;
+}
+
+/* -----------------------
+Layout styles
+------------------------*/
+
+.container {
+    max-width: 70em;
+    margin: 0 auto;
+}
+
+.header {
+    color: #fff;
+    background: #555;
+    padding: 1em 1.25em;
+}
+
+.header-heading {
+    margin: 0;
+}
+
+.nav-bar {
+    background: #000;
+    padding: 0;
+}
+
+.content {
+    overflow: hidden;
+    padding: 1em 1.25em;
+    /* background-color: #fdf6e3; */
+}
+
+.main,
+.aside {
+    margin-bottom: 1em;
+}
+
+.footer {
+    color: #fff;
+    background: #000;
+    padding: 1em 1.25em;
+}
+
+.nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav li {
+    display: inline;
+    margin: 0;
+}
+
+.nav a {
+    display: block;
+    padding: .7em 1.25em;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid gray;
+}
+
+.nav a:link {
+    color: white;
+}
+
+.nav a:visited {
+    color: white;
+}
+
+.nav a:focus {
+    color: black;
+    background-color: white;
+}
+
+.nav a:hover {
+    color: white;
+    background-color: #859900;
+}
+
+.nav a:active {
+    color: white;
+    background-color: #dc322f;
+}
+
+/* -----------------------
+Single styles
+------------------------*/
+
+.img-responsive {
+    max-width: 100%;
+}
+
+.btn {
+    color: #fff !important;
+    background-color: #268bd2;
+    display: inline-block;
+    padding: .5em 1em;
+    margin-bottom: 0;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: .2em;
+    text-decoration: none;
+}
+
+.btn:hover {
+    color: #fff !important;
+    background-color: #859900;
+}
+
+.btn:focus {
+    color: #fff !important;
+    background-color: black;
+}
+
+.btn:active {
+    color: #fff !important;
+    background-color: red;
+}
+
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+.list-inline {
+    padding-left: 0;
+    margin-left: -5px;
+    list-style: none;
+}
+
+.list-inline>li {
+    display: inline-block;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+/* -----------------------
+Wide styles
+------------------------*/
+
+@media (min-width: 42em) {
+    .header {
+        padding: 1.5em 3em;
+    }
+
+    .nav-bar {
+        padding: 1em 3em;
+    }
+
+    .content {
+        padding: 2em 3em;
+    }
+
+    .footer {
+        padding: 2em 3em;
+    }
+
+    .nav li {
+        display: inline;
+        margin: 0 1em 0 0;
+    }
+
+    .nav a {
+        display: inline;
+        padding: 0;
+        border-bottom: 0;
+    }
+}
+

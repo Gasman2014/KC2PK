@@ -2,7 +2,8 @@ from configparser import ConfigParser
 
 
 def read_db_config(filename='config.ini', section='mysql'):
-    """ Read database configuration file and return a dictionary object
+    """ Read database configuration file and return a dictionary object.
+
     :param filename: name of the configuration file
     :param section: section of database configuration
     :return: a dictionary of database parameters
@@ -25,7 +26,8 @@ def read_db_config(filename='config.ini', section='mysql'):
 
 
 def read_octopart_config(filename='config.ini', section='octopart'):
-    """ Read database configuration file and return a dictionary object
+    """ Read database configuration file and return a dictionary object.
+
     :param filename: name of the configuration file
     :param section: section of database configuration
     :return: a dictionary of Octopart parameters
@@ -48,7 +50,8 @@ def read_octopart_config(filename='config.ini', section='octopart'):
 
 
 def read_distributors_config(filename='config.ini', section='distributors'):
-    """ Read database configuration file and return a dictionary object
+    """ Read database configuration file and return a dictionary object.
+
     :param filename: name of the configuration file
     :param section: section of database configuration
     :return: a dictionary of database parameters
@@ -71,7 +74,8 @@ def read_distributors_config(filename='config.ini', section='distributors'):
 
 
 def read_currency_config(filename='config.ini', section='currency'):
-    """ Read database configuration file and return a dictionary object
+    """ Read database configuration file and return a dictionary object.
+
     :param filename: name of the configuration file
     :param section: section of database configuration
     :return: a dictionary of database parameters
