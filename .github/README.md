@@ -25,10 +25,13 @@ When the script ends, the user is presented with a web page with all the compone
 
 ![](screenshots/web.png)
 
-'Green' components are ones that are on the PK database and for which there is an adequate stock. 'Pink' components are on the PK database but the stock is insufficient for the project. (There are some items I have recently ordered which is why they have not yet been allocated inventory numbers and are in my INBOX). 'Bluey-green' lines are parts that I am not keeping a stock record of with PK e.g.	 various pin headers here.
-The 'brownish' lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet & the BOM total is not calculated as it is not meaningful.
+The 'pale grey' lines are ones where there is more than one component in the PK database that meets the parameters set and this was the one that was chosen at run time (see above). If you elect not to choose until you stock pick, there is an extra warning on the BOM sheet & the BOM total is not calculated as it is not meaningful. (I might yet change this to do the calculation but identfy that n parts have not been included).
 
-I have added some icons for ROHS status and manufacturing status (with tooltips). The icons & stylesheets need to remain in the 'assets' directory. The output page is a webpage (webpage.html) in the same directory as the script.
+The 'dark gray' lines are for components that are not registered with PartKeepr. For example, you might choose to not manage some items in PartKeepr. e.g. There may be some mounting hardware on the BOM which is needed for assembly but the stock of hardware is not recorded in PartKeepr.
+
+This will also highlight items which have not been incorporated in the PartKeepr database and ensures that all items that appear on the BOM have been validated by inclusion in the database.
+
+ The output page is a webpage (webpage.html) in the same directory as the script.
 
 ![](screenshots/web1.png)
 
@@ -56,3 +59,8 @@ Each component in the main webpage has a list of distributors (from a 'preferrre
 The script has been developed on macOS and runs on Python3. It should run on Unix type systems but might be more of a problem on Windows. There is a config.ini file which will need to be set up with appropriate entries for where the PK database is and a username and password. There are a number of Python dependencies - all of which should be installed easily with pip. The most important is mySQLconnector. (https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html) If your PartKeepr database is not on mySQL you may need to adjust the configuration and the connector - I have no experience or knowledge of alternatives.
 
 I have recently updated this tool with a number of enhancements. The main improvement is to set this out as a columnanr layout allowing one to sum prices for each provider. The cheapest price is automatically selected for each row but an alternative can be selected, which will then highlight the cell in orange. The whole row can be exluded form the BOM if you wish by ticking the 'exclude' box. The css output is rather less garish than before. I have added a few graphs which may be of value to some and add a bit of colour ;) 
+
+To Do
+
+1. Mechanism to regenerate an output BOM sheet with the details of the actual selected components and pricing.
+2. Mechanism to submit the selected components from each supplier as a 'Quick Order'. This mechanism is different for each supplier. Some allow a simple clipboard pase, others will require a CSV upload. 
