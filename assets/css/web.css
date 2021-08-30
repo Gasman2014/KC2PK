@@ -27,18 +27,18 @@ h1 {
     } /* 36px */
 
 h2 {
-    font-size: 1.55em;
+    font-size: 1.65em;
     text-align: left;
     color: #073642;
     margin-bottom: 1em;
     margin-top: 2em;
-    margin-left: 2.5em;
+    margin-left: 2em;
 }
 
 h3 {
     font-size: 1.375em;
     margin-top: 0.5em;
-    margin-left: 3em;}
+    margin-left: 2.5em;}
     /* 22px */
 h4 { font-size: 1.125em; } /* 18px */
 h5 { font-size: 1em; } /* 16px */
@@ -128,14 +128,13 @@ input[type="radio"]:checked + label {
 }
 
 .accounting td{
-    font-size: 1.35em;
     vertical-align: bottom;
     border-collapse: collapse;
 	border: 0px solid #93a1a1;
     height:22px;
     margin-left: 2.5em;
-    padding-left: 2.2em;
-    padding-right: 3.2em;
+    padding-left: 2em;
+    padding-right: 4em;
 }
 
 /* .accounting th, tr:nth-child(even) {background: #eee8d5}
@@ -159,6 +158,8 @@ input[type="radio"]:checked + label {
 
 .center {
     vertical-align: middle;
+    width:50px;
+    height: auto;
     margin-left: auto;
     margin-right: auto;
     background-color : #fff;

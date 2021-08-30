@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import csv
@@ -725,7 +725,7 @@ def octopartLookup(partIn, bean):
 
     if bean:
         #
-        url = "http://octopart.com/api/v3/parts/search"
+        url = "https://octopart.com/api/v4/rest/parts/search"
         url += '?apikey=' + apikey
         url += '&q="' + Part + '"'
         url += '&include[]=descriptions'
@@ -736,7 +736,7 @@ def octopartLookup(partIn, bean):
 
     elif combo:
         #
-        url = "http://octopart.com/api/v3/parts/match"
+        url = "https://octopart.com/api/v4/rest/parts/match"
         url += '?apikey=' + apikey
         url += '&queries=[{"brand":"' + comboManf + \
             '","mpn":"' + comboPart + '"}]'
@@ -747,7 +747,7 @@ def octopartLookup(partIn, bean):
         url += '&country=GB'
 
     else:
-        url = "http://octopart.com/api/v3/parts/match"
+        url = "https://octopart.com/api/v4/rest/parts/match"
         url += '?apikey=' + apikey
         url += '&queries=[{"mpn":"' + Part + '"}]'
         url += '&include[]=descriptions'
@@ -755,6 +755,7 @@ def octopartLookup(partIn, bean):
         url += '&include[]=specs'
         url += '&include[]=datasheets'
         url += '&country=GB'
+        
 
     data = urllib.request.urlopen(url).read()
     response = json.loads(data.decode('utf8'))
@@ -783,17 +784,19 @@ def octopartLookup(partIn, bean):
 
             # Get image (if present). Also need to get attribution for Octopart licensing
             try:
-                image = str(item['imagesets'][0]['medium_image'].get(
-                    'url', None))
+#                image = str(item['imagesets'][0]['medium_image'].get('url', None))
+                image = item['imagesets'][0]['large_image']['url']
             except:
                 IndexError
                 image = ""
 
             try:
-                credit = str(item['imagesets'][0].get('credit_string', None))
+                credit = item['imagesets'][0]['credit_string']
+                crediturl = item['imagesets'][0]['credit_url']
             except:
                 IndexError
                 credit = ""
+                crediturl = ""
 
             webpage.write(
                 "<div class='content' id = 'thumbnail'><table class = 'table2'><tr><td style = 'width:100px;'><img src='"
@@ -813,8 +816,7 @@ def octopartLookup(partIn, bean):
             for spec in item['specs']:
                 parm = item['specs'][spec]['metadata']['name']
                 try:
-                    if type(item['specs'][spec]['display_value']):
-                        val = str(item['specs'][spec]['display_value'])
+                    val = str(item['specs'][spec]['value'][0])
                 except:
                     IndexError
                     val = "Not Listed by Manufacturer"
@@ -836,9 +838,9 @@ def octopartLookup(partIn, bean):
                 if d == 1:
                     specfile.write(',' + datasheet['url'])
                 try:
-                    if (datasheet['metadata']['last_updated']):
+                    if (datasheet['metadata']['date_created']):
                         dateUpdated = (
-                            datasheet['metadata']['last_updated'])[:10]
+                            datasheet['metadata']['date_created'])[:10]
                     else:
                         dateUpdated = "Unknown"
                 except:
@@ -904,7 +906,7 @@ def octopartLookup(partIn, bean):
                 _moq = str(offer['moq'])
                 _productURL = str(offer['product_url'])
                 _onOrderQuant = offer['on_order_quantity']
-                _onOrderETA = offer['on_order_eta']
+#                _onOrderETA = offer['on_order_eta']
                 _factoryLead = offer['factory_lead_days']
                 _package = str(offer['packaging'])
                 _currency = str(offer['prices'])
@@ -915,15 +917,15 @@ def octopartLookup(partIn, bean):
                 if _package == "None":
                     _package = "-"
 
-                if not _factoryLead or _factoryLead == "None":
-                    _factoryLead = "-"
-                else:
-                    _factoryLead = int(int(_factoryLead) / 7)
+                # if not _factoryLead or _factoryLead == "None":
+                #     _factoryLead = "-"
+                # else:
+                #     _factoryLead = int(int(_factoryLead) / 7)
 
                 if _seller in preferred:
                     data = str(_seller) + ", " + str(_sku) + ", " + \
                         str(_stock) + ", " + str(_moq) + ", " + str(_productURL) + ", " +\
-                        str(_factoryLead) + ", " + str(_onOrderETA) + ", " + str(_onOrderQuant) +\
+                        str(_factoryLead) + ", " + str("_onOrderETA") + ", " + str(_onOrderQuant) +\
                         ", " + str(locale)
                     stockfile.write(data)
 
@@ -1155,10 +1157,8 @@ def get_choice(possible):
     for name, description, stockLevel, minStockLevel, averagePrice, partNum, storage_locn, PKid, Manufacturer in possible:
         #        print(i, " : ", name, " : ", description,
         #              " [Location] ", storage_locn, " [Part Number] ", partNum, " [Stock] ", stockLevel)
-        print((
-            "{:3} {:25} {:50.50} Location {:10} Manf {:12} HPN {:5} Stock {:5} Price(av) {:3s} {:6}"
-        ).format(i, name, description, storage_locn, Manufacturer, partNum,
-                 stockLevel, baseCurrency, averagePrice))
+#        print(("{:3} {:25} {:50.50} Location {:10} Manf {:12} HPN {:5} Stock {:5} Price(av) {:3s} {:6}").format(i, name, description, storage_locn, Manufacturer, partNum, stockLevel, baseCurrency, averagePrice))
+        print(i, name, description )
         #    subprocess.call(['/usr/local/bin/pyparts', 'specs', name])
         i = i + 1
     print("Choose which component to add to BOM (or 0 to defer)")
