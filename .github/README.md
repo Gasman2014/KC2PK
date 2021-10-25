@@ -3,7 +3,7 @@ KiCad to PartKeepr BOM Tool
 
 This tool aims to integrate electronic component management using electronic designs produced in KiCad and inventory management using PartKeepr.
 
-Kicad is an open-source Electronic Design Automation (EDA) tool (www.kicad-pcb.org) for producing printed circuit boards from electronic designs.
+Kicad is an open-source Electronic Design Automation (EDA) tool (www.kicad.org) for producing printed circuit boards from electronic designs.
 
 PartKeepr is an open source inventory management system (https://www.partkeepr.org) designed for stock control for electronic components.
 
